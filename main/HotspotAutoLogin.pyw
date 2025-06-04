@@ -287,16 +287,18 @@ def get_connected_network():
     
 # Is connected to wifi
 def is_connected_to_wifi():
+    """Return True if the machine is connected to a Wi-Fi network."""
     try:
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        wifi_output = subprocess.check_output(["netsh", "wlan", "show", "interfaces"], startupinfo=startupinfo).decode("utf-8")
+        wifi_output = subprocess.check_output(
+            ["netsh", "wlan", "show", "interfaces"], startupinfo=startupinfo
+        ).decode("utf-8")
         wifi_lines = wifi_output.split("\n")
         for line in wifi_lines:
-            if "SSID" in line:
+            if "State" in line and "connected" in line.lower():
                 return True
-        else:
-            return False
+        return False
     except subprocess.CalledProcessError:
         return False
     
